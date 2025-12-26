@@ -9,3 +9,5 @@ config/keys/*
 config/etc/letsencrypt/**/*
 config/fail2ban/**/*
 config/log/*
+config/.donoteditthisfile.conf
+config/.migrations

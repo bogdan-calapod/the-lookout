@@ -18,3 +18,7 @@ Check it out and feel free to fork it if you find it useful!
 > * `LOOKOUT_PASS` - Default password for services
 > * `LOOKOUT_DOMAIN` - Domain on which services are running
 > * `LOOKOUT_SONARR_API_KEY` - Sonarr API key for services
+
+> [!TIP]
+>
+> Fun fact - you'll see names like The Lookout, Rocky, Rider, Chase - these are all named after Paw Patrol characters 🐕

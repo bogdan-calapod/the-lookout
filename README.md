@@ -16,3 +16,4 @@ Check it out and feel free to fork it if you find it useful!
 > `LOOKOUT_USER` - Default username for services
 > `LOOKOUT_PASS` - Default password for services
 > `LOOKOUT_DOMAIN` - Domain on which services are running
+> `LOOKOUT_SONARR_API_KEY` - Sonarr API key for services

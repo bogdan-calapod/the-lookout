@@ -10,3 +10,9 @@ This includes stuff like:
 * all based on the linuxserver.io setup mainly.
 
 Check it out and feel free to fork it if you find it useful!
+
+> Note: this assumes you have the following environment variables defined (usually in your `/etc/profile`):
+>
+> `LOOKOUT_USER` - Default username for services
+> `LOOKOUT_PASS` - Default password for services
+> `LOOKOUT_DOMAIN` - Domain on which services are running

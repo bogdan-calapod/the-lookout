@@ -1,0 +1,149 @@
+services:
+  swag:
+    image: lscr.io/linuxserver/swag
+    container_name: swag
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - URL=${LOOKOUT_DOMAIN}
+      - VALIDATION=http
+    volumes:
+      - "${HOME}/appdata/config:/config"
+    networks:
+      - lsio
+    ports:
+      - 443:443
+      - 80:80
+    restart: unless-stopped
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE #optional
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - SERVERURL=${LOOKOUT_DOMAIN} #optional
+      - SERVERPORT=51820 #optional
+      - PEERS=mac,phone
+      - PEERDNS=auto #optional
+      - INTERNAL_SUBNET=10.13.13.0 #optional
+      - ALLOWEDIPS=0.0.0.0/0 #optional
+      - LOG_CONFS=true #optional
+    networks:
+      - lsio
+    volumes:
+      - "${HOME}/appdata/wireguard:/config"
+      - /lib/modules:/lib/modules #optional
+    ports:
+      - 51820:51820/udp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    hostname: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - "${HOME}/appdata/sonarr/:/config"
+      - "${HOME}/media/tv:/tv"
+      - "${HOME}/media/downloads:/downloads"
+    ports:
+      - 8989:8989
+    networks:
+      - lsio
+    restart: unless-stopped
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - "${HOME}/appdata/prowlarr:/config"
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+    networks:
+      - lsio
+  unpackerr:
+    image: golift/unpackerr
+    container_name: unpackerr
+    volumes:
+      - "${HOME}/media/downloads:/downloads"
+    restart: always
+    user: 1001:100
+    networks:
+      - lsio
+    environment:
+      - TZ=Etc/UTC
+      - UN_LOG_FILE=/downloads/unpackerr.log
+      - UN_SONARR_0_URL=https://${LOOKOUT_DOMAIN}/sonarr
+      - UN_SONARR_0_API_KEY=${LOOKOUT_SONARR_API_KEY}
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: transmission
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - USER=${LOOKOUT_USER}
+      - PASS=${LOOKOUT_PASS}
+    volumes:
+      - "${HOME}/appdata/transmission:/config"
+      - "${HOME}/media/downloads:/downloads"
+      - "${HOME}/media/watch:/watch"
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    restart: unless-stopped
+    networks:
+      - lsio
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - JELLYFIN_PublishedServerUrl=https://${LOOKOUT_DOMAIN}/jellyfin #optional
+    volumes:
+      - "${HOME}/appdata/jellyfin:/config"
+      - "${HOME}/media/tv:/data/tvshows"
+      - "${HOME}/media/movies:/data/movies"
+    ports:
+      - 8096:8096
+      - 8920:8920 
+      - 7359:7359/udp 
+      - 1900:1900/udp
+    restart: unless-stopped
+    networks:
+      - lsio
+  clip:
+    image: sathvikrao/clipcascade:latest
+    container_name: clip
+    ports:
+      - 8080:8080
+    restart: unless-stopped
+    environment:
+      - CC_MAX_MESSAGE_SIZE_IN_MiB=10
+      - CC_P2P_ENABLED=true
+      - CC_SIGNUP_ENABLED=true
+    volumes:
+      - "${HOME}/appdata/clip:/database"
+    networks:
+      - lsio
+networks:
+  lsio:
+    driver: bridge

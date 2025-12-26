@@ -3,3 +3,9 @@ keys/*
 log/*
 **/*.log*
 **/*.swp
+**/*.sample
+config/dns-conf/*
+config/keys/*
+config/etc/letsencrypt/**/*
+config/fail2ban/**/*
+config/log/*
